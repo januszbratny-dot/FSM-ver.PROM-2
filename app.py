@@ -1,15 +1,20 @@
 import streamlit as st
 from config import logger
-from core.scheduler import schedule_client_immediately
+from utils.persistence import load_state_from_json, save_state_to_json
 from ui.sidebar import render_sidebar
 from ui.booking import render_booking_ui
-from utils.persistence import load_state_from_json
+from ui.tables import render_schedule_table
 
-st.set_page_config(page_title="Harmonogram", layout="wide")
+st.set_page_config(page_title="📅 Harmonogram Slotów", layout="wide")
 
-if not load_state_from_json():
-    st.session_state["initialized"] = True
+if "initialized" not in st.session_state:
+    load_state_from_json()
 
-st.title("📅 Harmonogram slotów")
+st.title("📅 Harmonogram pracy zespołów")
 render_sidebar()
 render_booking_ui()
+render_schedule_table()
+
+if st.button("💾 Zapisz dane"):
+    save_state_to_json()
+    st.success("Stan zapisany pomyślnie!")
