@@ -1,20 +1,14 @@
 import streamlit as st
-from config import logger
-from utils.persistence import load_state_from_json, save_state_to_json
-from ui.sidebar import render_sidebar
-from ui.booking import render_booking_ui
-from ui.tables import render_schedule_table
+from modules.ui import run_ui
+from modules.persistence import load_state_from_json, save_state_to_json
+from modules.config import STORAGE_FILENAME
 
-st.set_page_config(page_title="📅 Harmonogram Slotów", layout="wide")
+# ---------------------- INIT ----------------------
+st.set_page_config(page_title="Harmonogram slotów", layout="wide")
+if not load_state_from_json(STORAGE_FILENAME):
+    # Pierwsze uruchomienie - inicjalizacja w module UI
+    from modules.ui import init_default_state
+    init_default_state()
 
-if "initialized" not in st.session_state:
-    load_state_from_json()
-
-st.title("📅 Harmonogram pracy zespołów")
-render_sidebar()
-render_booking_ui()
-render_schedule_table()
-
-if st.button("💾 Zapisz dane"):
-    save_state_to_json()
-    st.success("Stan zapisany pomyślnie!")
+# ---------------------- URUCHOMIENIE UI ----------------------
+run_ui()
